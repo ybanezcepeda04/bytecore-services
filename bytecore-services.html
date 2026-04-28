@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ByteCore Services — Soluciones Tecnológicas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Syne:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #050810;
+      --bg2: #080d1a;
+      --cyan: #00f5ff;
+      --cyan-dim: rgba(0,245,255,0.15);
+      --cyan-glow: rgba(0,245,255,0.4);
+      --green: #00ff88;
+      --green-dim: rgba(0,255,136,0.12);
+      --text: #e8edf5;
+      --muted: #5a6a8a;
+      --card: rgba(255,255,255,0.03);
+      --border: rgba(0,245,255,0.12);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* CUSTOM CURSOR */
+    .cursor {
+      width: 12px; height: 12px;
+      background: var(--cyan);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s, width 0.2s, height 0.2s;
+      box-shadow: 0 0 12px var(--cyan), 0 0 24px var(--cyan-glow);
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid var(--cyan-glow);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s ease, width 0.2s, height 0.2s;
+    }
+
+    /* GRID BACKGROUND */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background: rgba(5,8,16,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: var(--cyan);
+      text-shadow: 0 0 20px var(--cyan-glow);
+      letter-spacing: 2px;
+    }
+
+    .logo span { color: var(--green); }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--cyan); }
+
+    .nav-cta {
+      background: transparent;
+      border: 1px solid var(--cyan);
+      color: var(--cyan) !important;
+      padding: 8px 20px;
+      border-radius: 4px;
+      transition: background 0.2s, box-shadow 0.2s !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--cyan-dim) !important;
+      box-shadow: 0 0 20px var(--cyan-glow) !important;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(0,245,255,0.07) 0%, transparent 65%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.72rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      border: 1px solid var(--border);
+      padding: 8px 20px;
+      border-radius: 100px;
+      margin-bottom: 32px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .dot {
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2.2rem, 6vw, 5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    h1 .line1 { color: var(--text); }
+    h1 .line2 {
+      color: var(--cyan);
+      text-shadow: 0 0 40px var(--cyan-glow), 0 0 80px rgba(0,245,255,0.2);
+    }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 48px;
+      font-weight: 300;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.9s ease both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--cyan);
+      color: var(--bg);
+      font-family: 'Syne', sans-serif;
+      font-weight: 500;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      padding: 16px 32px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 30px var(--cyan-glow), 0 0 60px rgba(0,245,255,0.2);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      padding: 16px 32px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.1);
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--cyan);
+      background: var(--cyan-dim);
+    }
+
+    /* SERVICES */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 100px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 500px;
+      line-height: 1.7;
+      margin-bottom: 56px;
+      font-weight: 300;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .service-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      cursor: none;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .service-card:hover {
+      border-color: var(--cyan-glow);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0,245,255,0.08);
+    }
+
+    .service-card:hover::before { opacity: 1; }
+
+    .service-icon {
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .service-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+
+    .service-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .service-tag {
+      display: inline-block;
+      margin-top: 16px;
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--green);
+      border: 1px solid rgba(0,255,136,0.2);
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+
+    /* WHY US */
+    .why-section {
+      padding: 80px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+      z-index: 1;
+      position: relative;
+    }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 24px;
+      margin-top: 0;
+    }
+
+    .why-card {
+      text-align: center;
+      padding: 32px 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--card);
+      transition: border-color 0.3s;
+    }
+
+    .why-card:hover { border-color: var(--green); }
+
+    .why-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--green);
+      text-shadow: 0 0 20px rgba(0,255,136,0.4);
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .why-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* CTA SECTION */
+    .cta-section {
+      padding: 80px 40px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-box {
+      max-width: 700px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, rgba(0,245,255,0.05), rgba(0,255,136,0.03));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 60px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 20%; right: 20%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), var(--green), transparent);
+    }
+
+    .cta-box h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .cta-box p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 36px;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .btn-whatsapp {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #25D366;
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      padding: 18px 40px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .btn-whatsapp:hover {
+      box-shadow: 0 0 30px rgba(37,211,102,0.4);
+      transform: translateY(-3px);
+    }
+
+    .whatsapp-icon {
+      width: 22px; height: 22px;
+      fill: #fff;
+    }
+
+    /* FLOAT WHATSAPP */
+    .float-wa {
+      position: fixed;
+      bottom: 32px; right: 32px;
+      background: #25D366;
+      width: 58px; height: 58px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      z-index: 200;
+      box-shadow: 0 4px 20px rgba(37,211,102,0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: bounceIn 1s ease 1.5s both;
+    }
+
+    .float-wa:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 30px rgba(37,211,102,0.6);
+    }
+
+    @keyframes bounceIn {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.1rem;
+      color: var(--cyan);
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    .footer-logo span { color: var(--green); }
+
+    footer p {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* SCANLINE EFFECT */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 9997;
+    }
+
+    @media (max-width: 680px) {
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+      section, .why-section, .cta-section { padding: 60px 20px; }
+      .hero { padding: 100px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Float WhatsApp -->
+<a class="float-wa" href="https://wa.me/18096155168?text=Hola%2C%20quiero%20información%20sobre%20sus%20servicios" target="_blank" title="Escríbenos por WhatsApp">
+  <svg class="whatsapp-icon" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">BYTE<span>CORE</span></div>
+  <ul class="nav-links">
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#contacto" class="nav-cta">Contactar</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-tag"><span class="dot"></span> Soluciones Tecnológicas Profesionales</div>
+  <h1>
+    <span class="line1">Tu Tecnología,</span><br>
+    <span class="line2">Nuestra Misión</span>
+  </h1>
+  <p class="hero-sub">Domótica, sistemas, cámaras, facturación y más. Instalamos, configuramos y resolvemos — rápido y con garantía.</p>
+  <div class="hero-btns">
+    <a href="https://wa.me/18096155168?text=Hola%2C%20quiero%20información%20sobre%20sus%20servicios" target="_blank" class="btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Solicitar Servicio
+    </a>
+    <a href="#servicios" class="btn-secondary">Ver Servicios →</a>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="servicios">
+  <div class="reveal">
+    <span class="section-label">// Nuestros Servicios</span>
+    <h2 class="section-title">¿En Qué Podemos Ayudarte?</h2>
+    <p class="section-desc">Ofrecemos soluciones tecnológicas completas para tu hogar y negocio. Profesionales, rápidos y con garantía.</p>
+  </div>
+  <div class="services-grid">
+
+    <div class="service-card reveal">
+      <span class="service-icon">🏠</span>
+      <div class="service-name">Domótica</div>
+      <p class="service-desc">Convierte tu hogar o negocio en un espacio inteligente. Control de luces, puertas, aire acondicionado y más desde tu celular.</p>
+      <span class="service-tag">Smart Home</span>
+    </div>
+
+    <div class="service-card reveal">
+      <span class="service-icon">💻</span>
+      <div class="service-name">Instalación de Windows</div>
+      <p class="service-desc">Instalamos y configuramos Windows en tu computadora. Incluye drivers, actualizaciones y optimización del sistema.</p>
+      <span class="service-tag">Software</span>
+    </div>
+
+    <div class="service-card reveal">
+      <span class="service-icon">🧾</span>
+      <div class="service-name">Sistema de Facturación</div>
+      <p class="service-desc">Instalamos y configuramos tu sistema de facturación. Compatible con DGII y adaptado a las necesidades de tu negocio.</p>
+      <span class="service-tag">Negocios</span>
+    </div>
+
+    <div class="service-card reveal">
+      <span class="service-icon">🖨️</span>
+      <div class="service-name">Configuración de Impresora</div>
+      <p class="service-desc">Configuramos impresoras locales y en red, instalamos drivers y solucionamos errores de conexión e impresión.</p>
+      <span class="service-tag">Hardware</span>
+    </div>
+
+    <div class="service-card reveal">
+      <span class="service-icon">📷</span>
+      <div class="service-name">Configuración de Cámaras</div>
+      <p class="service-desc">Instalamos y configuramos sistemas de videovigilancia CCTV e IP. Acceso remoto desde tu celular las 24 horas.</p>
+      <span class="service-tag">Seguridad</span>
+    </div>
+
+    <div class="service-card reveal" style="border-color: rgba(0,255,136,0.2); background: rgba(0,255,136,0.03);">
+      <span class="service-icon">⚡</span>
+      <div class="service-name" style="color: var(--green);">¿Otro Servicio?</div>
+      <p class="service-desc">¿Tienes un problema técnico que no ves aquí? Escríbenos y con gusto te ayudamos a resolverlo.</p>
+      <a href="https://wa.me/18096155168?text=Hola%2C%20tengo%20una%20consulta%20sobre%20un%20servicio" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-size:0.8rem;color:var(--green);text-decoration:none;letter-spacing:1px;">Consultar ahora →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- WHY US -->
+<div class="why-section" id="nosotros">
+  <div class="reveal">
+    <span class="section-label">// ¿Por Qué Elegirnos?</span>
+    <h2 class="section-title">Números que Hablan</h2>
+  </div>
+  <div class="why-grid" style="margin-top:40px;">
+    <div class="why-card reveal">
+      <span class="why-num">98%</span>
+      <span class="why-label">Clientes satisfechos con nuestros servicios</span>
+    </div>
+    <div class="why-card reveal">
+      <span class="why-num">24h</span>
+      <span class="why-label">Tiempo de respuesta garantizado</span>
+    </div>
+    <div class="why-card reveal">
+      <span class="why-num">5+</span>
+      <span class="why-label">Años de experiencia en tecnología</span>
+    </div>
+    <div class="why-card reveal">
+      <span class="why-num">✓</span>
+      <span class="why-label">Garantía en todos nuestros servicios</span>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section" id="contacto">
+  <div class="cta-box reveal">
+    <h2>¿Listo para Comenzar?</h2>
+    <p>Contáctanos ahora por WhatsApp y recibe atención inmediata. Cuéntanos tu problema y te damos solución.</p>
+    <a href="https://wa.me/18096155168?text=Hola%20ByteCore%20Services%2C%20quiero%20solicitar%20un%20servicio" target="_blank" class="btn-whatsapp">
+      <svg class="whatsapp-icon" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Escribir por WhatsApp
+    </a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">BYTE<span>CORE</span> SERVICES</div>
+  <p>© 2026 ByteCore Services · Santiago, República Dominicana · +1 (809) 615-5168</p>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+    setTimeout(() => {
+      ring.style.left = e.clientX + 'px';
+      ring.style.top = e.clientY + 'px';
+    }, 80);
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
